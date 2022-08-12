@@ -1,3 +1,29 @@
+<div class="w-uploader">
+    <ngx-file-drop [contentClassName]="'w-uploader-content'" [dropZoneClassName]="'w-uploader-dropzone'"
+        [multiple]="false" headertext="" (onFileDrop)="dropped($event)">
+        <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+            <div libFlexRow libFlexRowAlign="center">
+                <div libFlexColumn>
+                    <span>Drop hotel json here</span>
+                </div>
+                <div libFlexColumn>
+                    <button mat-button (click)="openFileSelector()">
+                        Or choose a file
+                    </button>
+                </div>
+            </div>
+        </ng-template>
+    </ngx-file-drop>
+</div>
+
+<div class="push-top-lg">
+    <div libFlexRow *ngFor="let hotel of hotels; let first = first" [class.push-top]="!first">
+        <div libFlexColumn libFlexFill>
+            {{ hotel.elements.catalog_name}}
+        </div>
+    </div>
+</div>
+
 <div>
     <a [routerLink]="'/hotel'">View hotel</a>
 </div>
