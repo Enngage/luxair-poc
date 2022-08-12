@@ -5,8 +5,11 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --prod",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "netlify:deploy:dev": "npm run build:prod && netlify deploy",
+    "netlify:deploy:prod": "npm run build:prod && netlify deploy --prod"
   },
   "private": true,
   "dependencies": {
