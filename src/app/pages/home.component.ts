@@ -41,11 +41,9 @@ export class HomeComponent extends CoreComponent implements OnInit {
 
         const data = await fileToImport.text();
 
-        const response = await this.kontentAiService.importFromJson(
-          JSON.parse(data) as any
-        );
+        const response = await this.kontentAiService.importFromJson(JSON.parse(data) as any);
+        console.log('Imported', response);
         super.markForCheck();
-        console.log('Created', response);
       }
     });
   }

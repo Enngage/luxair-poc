@@ -90,14 +90,14 @@ export namespace RawJson {
     }
 
     export interface Descriptions {
-        highlights: string[];
-        location: Location2;
-        foodBeverage: FoodBeverage;
-        sports: Sports;
-        pool: Pool;
-        children: Children;
-        additionalInfo: AdditionalInfo;
-        includedInPackage: IncludedInPackage;
+        highlights?: string[];
+        location?: Location2;
+        foodBeverage?: FoodBeverage;
+        sports?: Sports;
+        pool?: Pool;
+        children?: Children;
+        additionalInfo?: AdditionalInfo;
+        includedInPackage?: IncludedInPackage;
     }
 
     export interface Catalog {

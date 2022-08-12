@@ -5,21 +5,17 @@ import {
 } from '@kontent-ai/delivery-sdk';
 import {
   AssetResponses,
-  ContentItemModels,
-  ContentItemResponses,
   createManagementClient,
   IManagementClient,
   LanguageVariantResponses,
   WorkflowContracts,
 } from '@kontent-ai/management-sdk';
-import { from, map, Observable, switchMap } from 'rxjs';
+import { from, map, Observable } from 'rxjs';
 import {
   contentTypes,
   Hotel,
   languages,
-  RoomGroup,
   taxonomies,
-  workflows,
 } from '../models';
 import { RawJson } from './json.model';
 
@@ -42,6 +38,9 @@ export class KontentAiService {
   constructor() {
     this.deliveryClient = createDeliveryClient({
       projectId: this.projectId,
+      defaultQueryConfig: {
+        waitForLoadingNewContent: true
+      }
     });
     this.managementClient = createManagementClient({
       apiKey: this.apiKey,
@@ -53,8 +52,9 @@ export class KontentAiService {
     return from(
       this.deliveryClient
         .items<Hotel>()
+        //.type(contentTypes.hotel.codename)
         .orderByDescending('elements.created')
-        .toAllPromise()
+        .toPromise()
     ).pipe(
       map((response) => {
         return response.data.items;
@@ -253,7 +253,7 @@ export class KontentAiService {
             codename: hotelElements.highlights.codename,
           },
           value: this.convertStringArrayToRichTextElementValue(
-            hotel.accommodation.descriptions.highlights
+            hotel.accommodation.descriptions?.highlights
           ),
         }),
         builder.richTextElement({
@@ -261,7 +261,7 @@ export class KontentAiService {
             codename: hotelElements.location.codename,
           },
           value: this.convertStringArrayToRichTextElementValue(
-            hotel.accommodation.descriptions.location.description
+            hotel.accommodation.descriptions.location?.description
           ),
         }),
         builder.richTextElement({
@@ -269,7 +269,7 @@ export class KontentAiService {
             codename: hotelElements.food___beverage.codename,
           },
           value: this.convertStringArrayToRichTextElementValue(
-            hotel.accommodation.descriptions.foodBeverage.description
+            hotel.accommodation.descriptions.foodBeverage?.description
           ),
         }),
         builder.richTextElement({
@@ -277,7 +277,7 @@ export class KontentAiService {
             codename: hotelElements.sports.codename,
           },
           value: this.convertStringArrayToRichTextElementValue(
-            hotel.accommodation.descriptions.sports.description
+            hotel.accommodation.descriptions.sports?.description
           ),
         }),
         builder.richTextElement({
@@ -285,7 +285,7 @@ export class KontentAiService {
             codename: hotelElements.children.codename,
           },
           value: this.convertStringArrayToRichTextElementValue(
-            hotel.accommodation.descriptions.children.description
+            hotel.accommodation.descriptions.children?.description
           ),
         }),
         builder.richTextElement({
@@ -293,7 +293,7 @@ export class KontentAiService {
             codename: hotelElements.pool.codename,
           },
           value: this.convertStringArrayToRichTextElementValue(
-            hotel.accommodation.descriptions.pool.description
+            hotel.accommodation.descriptions.pool?.description
           ),
         }),
         builder.richTextElement({
@@ -301,7 +301,7 @@ export class KontentAiService {
             codename: hotelElements.additional_info.codename,
           },
           value: this.convertStringArrayToRichTextElementValue(
-            hotel.accommodation.descriptions.additionalInfo.description
+            hotel.accommodation.descriptions.additionalInfo?.description
           ),
         }),
         builder.richTextElement({
@@ -309,7 +309,7 @@ export class KontentAiService {
             codename: hotelElements.included_in_package.codename,
           },
           value: this.convertStringArrayToRichTextElementValue(
-            hotel.accommodation.descriptions.includedInPackage.description
+            hotel.accommodation.descriptions.includedInPackage?.description
           ),
         }),
       ])
@@ -387,9 +387,9 @@ export class KontentAiService {
     return `https://api.allorigins.win/raw?url=${imageUrl}`;
   }
 
-  private convertStringArrayToRichTextElementValue(array: string[]): string {
-    if (!array.length) {
-      return '<p><p>';
+  private convertStringArrayToRichTextElementValue(array: string[] | undefined): string {
+    if (!array || !array.length) {
+      return '<p></p>';
     }
     let html = `<ul>`;
 
