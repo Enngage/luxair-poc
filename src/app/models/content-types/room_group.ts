@@ -28,7 +28,7 @@ export type RoomGroup = IContentItem<{
 
   /**
    * Rooms (modular_content)
-   * Required: true
+   * Required: false
    * Id: a8a8292d-e0dd-42d2-9879-859e8be397e7
    * Codename: rooms
    */

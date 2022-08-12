@@ -33,7 +33,7 @@ export const contentTypes = {
 
   /**
    * Room Group
-   * Last modified: Fri Aug 12 2022 10:53:32 GMT+0200 (Central European Summer Time)
+   * Last modified: Fri Aug 12 2022 11:11:53 GMT+0200 (Central European Summer Time)
    */
   room_group: {
     codename: 'room_group',
@@ -75,7 +75,7 @@ export const contentTypes = {
         id: 'a8a8292d-e0dd-42d2-9879-859e8be397e7',
         externalId: undefined,
         name: 'Rooms',
-        required: true,
+        required: false,
         type: 'modular_content',
         snippetCodename: undefined,
       },
@@ -84,7 +84,7 @@ export const contentTypes = {
 
   /**
    * Hotel
-   * Last modified: Fri Aug 12 2022 10:53:03 GMT+0200 (Central European Summer Time)
+   * Last modified: Fri Aug 12 2022 15:29:48 GMT+0200 (Central European Summer Time)
    */
   hotel: {
     codename: 'hotel',
@@ -212,8 +212,8 @@ export const contentTypes = {
       /**
        * Images (asset)
        */
-      untitled_asset: {
-        codename: 'untitled_asset',
+      images: {
+        codename: 'images',
         id: '7eeda343-1770-46f9-bd62-e7987dd99637',
         externalId: undefined,
         name: 'Images',
@@ -301,13 +301,26 @@ export const contentTypes = {
       },
 
       /**
-       * Untitled rich text (rich_text)
+       * Pool (rich_text)
        */
       untitled_rich_text: {
         codename: 'untitled_rich_text',
         id: '99ab29c4-7643-429f-bcbc-d7c287cf1577',
         externalId: undefined,
-        name: 'Untitled rich text',
+        name: 'Pool',
+        required: false,
+        type: 'rich_text',
+        snippetCodename: undefined,
+      },
+
+      /**
+       * Additional info (rich_text)
+       */
+      additional_info: {
+        codename: 'additional_info',
+        id: 'c89ca177-64ff-40ea-9f12-0c270a66ed3a',
+        externalId: undefined,
+        name: 'Additional info',
         required: false,
         type: 'rich_text',
         snippetCodename: undefined,

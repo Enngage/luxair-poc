@@ -88,9 +88,9 @@ export type Hotel = IContentItem<{
    * Images (asset)
    * Required: true
    * Id: 7eeda343-1770-46f9-bd62-e7987dd99637
-   * Codename: untitled_asset
+   * Codename: images
    */
-  untitled_asset: Elements.AssetsElement;
+  images: Elements.AssetsElement;
 
   /**
    * Highlights (rich_text)
@@ -141,12 +141,20 @@ export type Hotel = IContentItem<{
   children: Elements.RichTextElement;
 
   /**
-   * Untitled rich text (rich_text)
+   * Pool (rich_text)
    * Required: false
    * Id: 99ab29c4-7643-429f-bcbc-d7c287cf1577
    * Codename: untitled_rich_text
    */
   untitled_rich_text: Elements.RichTextElement;
+
+  /**
+   * Additional info (rich_text)
+   * Required: false
+   * Id: c89ca177-64ff-40ea-9f12-0c270a66ed3a
+   * Codename: additional_info
+   */
+  additional_info: Elements.RichTextElement;
 
   /**
    * Included in package (rich_text)

@@ -4,7 +4,9 @@ import {
   IDeliveryClient,
 } from '@kontent-ai/delivery-sdk';
 import {
+  AssetResponses,
   ContentItemModels,
+  ContentItemResponses,
   createManagementClient,
   IManagementClient,
   LanguageVariantResponses,
@@ -15,6 +17,7 @@ import {
   contentTypes,
   Hotel,
   languages,
+  RoomGroup,
   taxonomies,
   workflows,
 } from '../models';
@@ -80,7 +83,26 @@ export class KontentAiService {
       publishedWorkflowStep
     );
 
-    const contentItem = await this.managementClient
+    const imageAssetExternalIds = await this.getOrCreateImages(hotel);
+
+    let createNewVariant = false;
+    let publish = false;
+    try {
+      var existingHotel = await this.managementClient
+        .viewLanguageVariant()
+        .byItemExternalId(hotel.giataId)
+        .byLanguageCodename(languages.default.codename)
+        .toPromise();
+
+      createNewVariant =
+        existingHotel.data.workflowStep.id === publishedWorkflowStep.id;
+      publish = true;
+    } catch (error) {
+      // group might not exist
+      publish = true;
+    }
+
+    const hotelContentItem = await this.managementClient
       .upsertContentItem()
       .byItemExternalId(hotel.giataId)
       .withData({
@@ -91,9 +113,17 @@ export class KontentAiService {
       })
       .toPromise();
 
-    const languageVariant = await this.managementClient
+    if (createNewVariant) {
+      await this.managementClient
+        .createNewVersionOfLanguageVariant()
+        .byItemId(hotelContentItem.data.id)
+        .byLanguageCodename(languages.default.codename)
+        .toPromise();
+    }
+
+    const hotelLanguageVariant = await this.managementClient
       .upsertLanguageVariant()
-      .byItemId(contentItem.data.id)
+      .byItemId(hotelContentItem.data.id)
       .byLanguageCodename(languages.default.codename)
       .withData((builder) => [
         builder.textElement({
@@ -101,6 +131,16 @@ export class KontentAiService {
             codename: hotelElements.catalog_name.codename,
           },
           value: hotel.accommodation.catalog.name,
+        }),
+        builder.assetElement({
+          element: {
+            codename: hotelElements.images.codename,
+          },
+          value: imageAssetExternalIds.map((externalId) => {
+            return {
+              external_id: externalId,
+            };
+          }),
         }),
         builder.taxonomyElement({
           element: {
@@ -178,10 +218,187 @@ export class KontentAiService {
             },
           ],
         }),
+        builder.textElement({
+          element: {
+            codename: hotelElements.productcode.codename,
+          },
+          value: hotel.productCode,
+        }),
+        builder.textElement({
+          element: {
+            codename: hotelElements.giataid.codename,
+          },
+          value: hotel.giataId,
+        }),
+        builder.textElement({
+          element: {
+            codename: hotelElements.giata_city_id.codename,
+          },
+          value: hotel.accommodation.giataCityId,
+        }),
+        builder.textElement({
+          element: {
+            codename: hotelElements.giata_destination_id.codename,
+          },
+          value: hotel.accommodation.giataDestinationId,
+        }),
+        builder.textElement({
+          element: {
+            codename: hotelElements.giata_catalog_hotel_id.codename,
+          },
+          value: hotel.accommodation.giataCatalogHotelId,
+        }),
+        builder.richTextElement({
+          element: {
+            codename: hotelElements.highlights.codename,
+          },
+          value: this.convertStringArrayToRichTextElementValue(
+            hotel.accommodation.descriptions.highlights
+          ),
+        }),
+        builder.richTextElement({
+          element: {
+            codename: hotelElements.location.codename,
+          },
+          value: this.convertStringArrayToRichTextElementValue(
+            hotel.accommodation.descriptions.location.description
+          ),
+        }),
+        builder.richTextElement({
+          element: {
+            codename: hotelElements.food___beverage.codename,
+          },
+          value: this.convertStringArrayToRichTextElementValue(
+            hotel.accommodation.descriptions.foodBeverage.description
+          ),
+        }),
+        builder.richTextElement({
+          element: {
+            codename: hotelElements.sports.codename,
+          },
+          value: this.convertStringArrayToRichTextElementValue(
+            hotel.accommodation.descriptions.sports.description
+          ),
+        }),
+        builder.richTextElement({
+          element: {
+            codename: hotelElements.children.codename,
+          },
+          value: this.convertStringArrayToRichTextElementValue(
+            hotel.accommodation.descriptions.children.description
+          ),
+        }),
+        builder.richTextElement({
+          element: {
+            codename: hotelElements.pool.codename,
+          },
+          value: this.convertStringArrayToRichTextElementValue(
+            hotel.accommodation.descriptions.pool.description
+          ),
+        }),
+        builder.richTextElement({
+          element: {
+            codename: hotelElements.additional_info.codename,
+          },
+          value: this.convertStringArrayToRichTextElementValue(
+            hotel.accommodation.descriptions.additionalInfo.description
+          ),
+        }),
+        builder.richTextElement({
+          element: {
+            codename: hotelElements.included_in_package.codename,
+          },
+          value: this.convertStringArrayToRichTextElementValue(
+            hotel.accommodation.descriptions.includedInPackage.description
+          ),
+        }),
       ])
       .toPromise();
 
-    return languageVariant;
+    if (publish) {
+      await this.managementClient
+        .publishLanguageVariant()
+        .byItemId(hotelLanguageVariant.data.item.id as string)
+        .byLanguageCodename(languages.default.codename)
+        .withoutData()
+        .toPromise();
+    }
+
+    return hotelLanguageVariant;
+  }
+
+  private async getOrCreateImages(hotel: RawJson.Hotel): Promise<string[]> {
+    const numberOfImagesToUpload = 5;
+    const imagesToUpload: RawJson.Image[] = [];
+    const externalIds: string[] = [];
+
+    imagesToUpload.push(...hotel.images.slice(0, numberOfImagesToUpload));
+
+    const responses: AssetResponses.UpsertAssertResponse[] = [];
+    let index: number = 0;
+
+    for (const image of imagesToUpload) {
+      const externalId: string = `hotel_${hotel.giataId}_${image.large
+        .split('/')
+        .pop()}`;
+
+      // check if assset with this external id already exists
+      let assetExists: boolean = false;
+
+      try {
+        index++;
+
+        const existingAsset = await this.managementClient
+          .viewAsset()
+          .byAssetExternalId(externalId)
+          .toPromise();
+
+        assetExists = true;
+      } catch (error) {
+        console.error(error);
+        assetExists = false;
+      }
+
+      if (assetExists) {
+        externalIds.push(externalId);
+      } else {
+        const response = await this.managementClient
+          .uploadAssetFromUrl()
+          .withData({
+            asset: {
+              external_id: externalId,
+              title: `${hotel.accommodation.hotelName} - ${index}`,
+            },
+            binaryFile: {
+              filename: `hotel-${index}.jpg`,
+            },
+            fileUrl: this.getImageUrlThroughCorsProxy(image.large),
+          })
+          .toPromise();
+
+        externalIds.push(externalId);
+      }
+    }
+
+    return externalIds;
+  }
+
+  private getImageUrlThroughCorsProxy(imageUrl: string): string {
+    return `https://api.allorigins.win/raw?url=${imageUrl}`;
+  }
+
+  private convertStringArrayToRichTextElementValue(array: string[]): string {
+    if (!array.length) {
+      return '<p><p>';
+    }
+    let html = `<ul>`;
+
+    for (const item of array) {
+      html += `<li>${item}</li>`;
+    }
+
+    html += '</ul>';
+    return html;
   }
 
   private async ensureTourOperatorTaxonomy(operator: string): Promise<void> {
@@ -254,6 +471,7 @@ export class KontentAiService {
   ): Promise<string[]> {
     const result: string[] = [];
     for (const rawRoomGroup of hotel.accommodation.roomGroups) {
+      const groupName = `${hotel.accommodation.hotelName} - ${rawRoomGroup.name}`;
       const groupCodename =
         `hotel_${hotel.giataId}_${rawRoomGroup.type}_${rawRoomGroup.name}`.toLowerCase();
       let createNewVariant = false;
@@ -277,7 +495,7 @@ export class KontentAiService {
         .upsertContentItem()
         .byItemExternalId(groupCodename)
         .withData({
-          name: `${hotel.accommodation.hotelName} - ${rawRoomGroup.name}`,
+          name: groupName,
           codename: groupCodename,
           type: {
             codename: contentTypes.room_group.codename,
@@ -292,6 +510,13 @@ export class KontentAiService {
           .byLanguageCodename(languages.default.codename)
           .toPromise();
       }
+
+      // create rooms
+      const roomIds = await this.getOrCreateRooms(
+        hotel,
+        rawRoomGroup,
+        publishedWorkflowStep
+      );
 
       const roomGroupLanguageVariant = await this.managementClient
         .upsertLanguageVariant()
@@ -309,7 +534,11 @@ export class KontentAiService {
               element: {
                 codename: contentTypes.room_group.elements.rooms.codename,
               },
-              value: [],
+              value: roomIds.map((id) => {
+                return {
+                  id: id,
+                };
+              }),
             }),
             builder.taxonomyElement({
               element: {
@@ -334,6 +563,99 @@ export class KontentAiService {
           .withoutData()
           .toPromise();
       }
+
+      result.push(roomGroupLanguageVariant.data.item.id as string);
+    }
+
+    return result;
+  }
+
+  private async getOrCreateRooms(
+    hotel: RawJson.Hotel,
+    rawRoomGroup: RawJson.RoomGroup,
+    publishedWorkflowStep: WorkflowContracts.IWorkflowPublishedStepContract
+  ): Promise<string[]> {
+    const result: string[] = [];
+    for (const rawRoom of rawRoomGroup.items) {
+      const roomName = `${rawRoom.name} | ${hotel.accommodation.hotelName}`;
+      const roomCodename =
+        `hotel_room_${hotel.giataId}_${rawRoomGroup.name}_${rawRoom.code}`.toLowerCase();
+
+      let createNewVariant = false;
+      let publish = false;
+      try {
+        var existingRoom = await this.managementClient
+          .viewLanguageVariant()
+          .byItemCodename(roomCodename)
+          .byLanguageCodename(languages.default.codename)
+          .toPromise();
+
+        createNewVariant =
+          existingRoom.data.workflowStep.id === publishedWorkflowStep.id;
+        publish = true;
+      } catch (error) {
+        // group might not exist
+        publish = true;
+      }
+
+      const room = await this.managementClient
+        .upsertContentItem()
+        .byItemExternalId(roomCodename)
+        .withData({
+          name: roomName,
+          codename: roomCodename,
+          type: {
+            codename: contentTypes.room.codename,
+          },
+        })
+        .toPromise();
+
+      if (createNewVariant) {
+        await this.managementClient
+          .createNewVersionOfLanguageVariant()
+          .byItemId(room.data.id)
+          .byLanguageCodename(languages.default.codename)
+          .toPromise();
+      }
+
+      const roomLanguageVariant = await this.managementClient
+        .upsertLanguageVariant()
+        .byItemId(room.data.id)
+        .byLanguageCodename(languages.default.codename)
+        .withData((builder) => {
+          return [
+            builder.textElement({
+              element: {
+                codename: contentTypes.room.elements.code.codename,
+              },
+              value: rawRoom.code,
+            }),
+            builder.textElement({
+              element: {
+                codename: contentTypes.room.elements.long_description.codename,
+              },
+              value: rawRoom.longDescription,
+            }),
+            builder.textElement({
+              element: {
+                codename: contentTypes.room.elements.short_description.codename,
+              },
+              value: rawRoom.shortDescription,
+            }),
+          ];
+        })
+        .toPromise();
+
+      if (publish) {
+        await this.managementClient
+          .publishLanguageVariant()
+          .byItemId(roomLanguageVariant.data.item.id as string)
+          .byLanguageCodename(languages.default.codename)
+          .withoutData()
+          .toPromise();
+      }
+
+      result.push(roomLanguageVariant.data.item.id as string);
     }
 
     return result;
