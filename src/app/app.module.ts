@@ -12,7 +12,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDividerModule } from '@angular/material/divider';
+import { LightgalleryModule } from 'lightgallery/angular';
 
 @NgModule({
   declarations: [AppComponent, HotelComponent, HomeComponent],
@@ -25,6 +27,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatButtonModule,
+    MatDividerModule,
+    LightgalleryModule,
     RouterModule.forRoot([
       {
         path: '',

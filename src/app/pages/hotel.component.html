@@ -1,2 +1,63 @@
+<div *ngIf="!hotel">
+    <div style="height:5px">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
+</div>
+<div *ngIf="hotel">
+    <div class="push-top-md push-bottom-md">
+        <mat-divider></mat-divider>
+    </div>
+    <div class="mat-headline">
+        {{ hotel.system.name}}
+    </div>
+    <div libFlexRow class="push-top-sm">
+        <div libFlexColumn>
+            <div class="caption">
+                {{ hotel.elements.city.value}} | <span
+                    *ngIf="hotel.elements.country.linkedItems.length">{{hotel.elements.country.linkedItems[0].system.name}}</span>
+            </div>
+        </div>
+        <div libFlexColumn>
+            <img [src]="hotel.elements.trip_advisor_icon_url.value">
+        </div>
+    </div>
 
-Hotel view
+    <div class="push-top-md w-gallery-wrapper">
+        <div libFlexRow [libFlexRowGap]="'8px'" [libFlexRowAlign]="'start'">
+            <div libFlexColumn [libFlexSize]="60" *ngIf="hotel.elements.images.value.length">
+                <lightgallery [settings]="settings">
+                    <a [href]="hotel.elements.images.value[0].url">
+                        <img [src]="getGalleryThumbnailImageUrl(hotel.elements.images.value[0])">
+                    </a>
+                </lightgallery>
+            </div>
+            <div libFlexColumn [libFlexSize]="'fill'" *ngIf="hotel.elements.images.value.length >= 2">
+                <div [libFlexRow]="true" [libFlexRowGap]="'8px'" [libFlexRowAlign]="'start'">
+                    <div libFlexColumn [libFlexSize]="'full'">
+                        <lightgallery [settings]="settings">
+                            <a [href]="hotel.elements.images.value[1].url">
+                                <img [src]="getGalleryThumbnailImageUrl(hotel.elements.images.value[1])">
+                            </a>
+                        </lightgallery>
+                    </div>
+                    <div libFlexColumn [libFlexSize]="'fill'" *ngIf="hotel.elements.images.value.length >= 3">
+                        <lightgallery [settings]="settings">
+                            <a [href]="hotel.elements.images.value[2].url">
+                                <img [src]="getGalleryThumbnailImageUrl(hotel.elements.images.value[2])">
+                            </a>
+                        </lightgallery>
+                    </div>
+                    <div libFlexColumn [libFlexSize]="'fill'" *ngIf="hotel.elements.images.value.length >= 4">
+                        <lightgallery [settings]="settings">
+                            <a [href]="hotel.elements.images.value[3].url">
+                                <img [src]="getGalleryThumbnailImageUrl(hotel.elements.images.value[3])">
+                            </a>
+                        </lightgallery>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

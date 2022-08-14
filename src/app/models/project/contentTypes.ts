@@ -84,7 +84,7 @@ export const contentTypes = {
 
   /**
    * Hotel
-   * Last modified: Fri Aug 12 2022 15:29:48 GMT+0200 (Central European Summer Time)
+   * Last modified: Sun Aug 14 2022 15:52:09 GMT+0200 (Central European Summer Time)
    */
   hotel: {
     codename: 'hotel',
@@ -412,6 +412,32 @@ export const contentTypes = {
         id: '98b41bff-0bed-4b04-925c-4b2599863b73',
         externalId: undefined,
         name: 'Giata catalog hotel id',
+        required: true,
+        type: 'number',
+        snippetCodename: undefined,
+      },
+
+      /**
+       * Trip Advisor Icon Url (text)
+       */
+      trip_advisor_icon_url: {
+        codename: 'trip_advisor_icon_url',
+        id: 'f51116d9-7344-4899-b392-3f4f4a75e59a',
+        externalId: undefined,
+        name: 'Trip Advisor Icon Url',
+        required: true,
+        type: 'text',
+        snippetCodename: undefined,
+      },
+
+      /**
+       * Trip Advisor Score (number)
+       */
+      trip_advisor_score: {
+        codename: 'trip_advisor_score',
+        id: '58b2fed9-f9fd-48f1-8330-fdf11d384358',
+        externalId: undefined,
+        name: 'Trip Advisor Score',
         required: true,
         type: 'number',
         snippetCodename: undefined,

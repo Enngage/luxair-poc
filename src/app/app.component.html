@@ -1,6 +1,13 @@
-
-
-
 <div class="content-wrapper">
-    <router-outlet></router-outlet>
+
+    <div libFlexRow>
+        <a libFlexColumn [routerLink]="'/'">
+            <img style="width:200px"
+                src="https://booking.luxairtours.lu/modules/proprietary/frontend/dist/b2c/en/logo-luxairtours.svg?u3qp6bi=">
+        </a>
+    </div>
+
+    <div class="push-top-md">
+        <router-outlet></router-outlet>
+    </div>
 </div>

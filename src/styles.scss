@@ -3,6 +3,8 @@
 @import "./lib/positioning/push";
 @import "./lib/positioning/pull";
 
+@import "~lightgallery/scss/lightgallery";
+
 @include flex();
 @include pad-utilities();
 @include push-utilities();
@@ -34,10 +36,10 @@ body {
   height: 100%;
 }
 body {
-  margin: 64px 24px;
+  margin: 24px 24px;
 
   .content-wrapper {
-    width: 1080px;
+    max-width: 1080px;
     margin-left: auto;
     margin-right: auto;
   }
@@ -55,6 +57,8 @@ body {
 
 img {
   border-radius: 10px;
+  height: 100%;
+  width: 100%;
 }
 
 .caption {
@@ -62,6 +66,7 @@ img {
   font-size: 13px;
 }
 
+.mat-headline,
 .mat-subheading-2,
 .mat-subheading-1,
 .mat-title,
@@ -69,5 +74,11 @@ img {
 .mat-display-2,
 .mat-display-3,
 .mat-display-4 {
-    margin-bottom: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.w-gallery-wrapper {
+  img {
+    cursor: pointer;
+  }
 }

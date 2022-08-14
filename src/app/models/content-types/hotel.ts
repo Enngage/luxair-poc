@@ -211,4 +211,20 @@ export type Hotel = IContentItem<{
    * Codename: giata_catalog_hotel_id
    */
   giata_catalog_hotel_id: Elements.NumberElement;
+
+  /**
+   * Trip Advisor Icon Url (text)
+   * Required: true
+   * Id: f51116d9-7344-4899-b392-3f4f4a75e59a
+   * Codename: trip_advisor_icon_url
+   */
+  trip_advisor_icon_url: Elements.TextElement;
+
+  /**
+   * Trip Advisor Score (number)
+   * Required: true
+   * Id: 58b2fed9-f9fd-48f1-8330-fdf11d384358
+   * Codename: trip_advisor_score
+   */
+  trip_advisor_score: Elements.NumberElement;
 }>;

@@ -11,12 +11,7 @@ import {
   WorkflowContracts,
 } from '@kontent-ai/management-sdk';
 import { from, map, Observable } from 'rxjs';
-import {
-  contentTypes,
-  Hotel,
-  languages,
-  taxonomies,
-} from '../models';
+import { contentTypes, Hotel, languages, taxonomies } from '../models';
 import { RawJson } from './json.model';
 
 @Injectable({
@@ -39,13 +34,23 @@ export class KontentAiService {
     this.deliveryClient = createDeliveryClient({
       projectId: this.projectId,
       defaultQueryConfig: {
-        waitForLoadingNewContent: true
-      }
+        waitForLoadingNewContent: true,
+      },
     });
     this.managementClient = createManagementClient({
       apiKey: this.apiKey,
       projectId: this.projectId,
     });
+  }
+
+  getHotel(codename: string): Observable<Hotel> {
+    return from(
+      this.deliveryClient.item<Hotel>(codename).depthParameter(3).toPromise()
+    ).pipe(
+      map((response) => {
+        return response.data.item;
+      })
+    );
   }
 
   getHotels(): Observable<Hotel[]> {
@@ -312,6 +317,18 @@ export class KontentAiService {
             hotel.accommodation.descriptions.includedInPackage?.description
           ),
         }),
+        builder.numberElement({
+          element: {
+            codename: hotelElements.trip_advisor_score.codename,
+          },
+          value: hotel.ratings.tripAdvisor.score
+        }),
+        builder.textElement({
+          element: {
+            codename: hotelElements.trip_advisor_icon_url.codename,
+          },
+          value: hotel.ratings.tripAdvisor.icon
+        }),
       ])
       .toPromise();
 
@@ -387,7 +404,9 @@ export class KontentAiService {
     return `https://api.allorigins.win/raw?url=${imageUrl}`;
   }
 
-  private convertStringArrayToRichTextElementValue(array: string[] | undefined): string {
+  private convertStringArrayToRichTextElementValue(
+    array: string[] | undefined
+  ): string {
     if (!array || !array.length) {
       return '<p></p>';
     }
