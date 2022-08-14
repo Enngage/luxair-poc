@@ -30,6 +30,10 @@ export class HomeComponent extends CoreComponent implements OnInit {
     this.initHotels();
   }
 
+  getHotelRouterLink(hotel: Hotel): string {
+    return `/hotel/${hotel.system.codename}`;
+  }
+
   private openSnackBar(message: string): void {
     this._snackBar.open(message, undefined, {
       duration: this.snackbarDuration,
