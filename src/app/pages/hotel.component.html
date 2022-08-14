@@ -60,4 +60,57 @@
         </div>
     </div>
 
+    <div class="push-top-md">
+        <mat-tab-group mat-align-tabs="start">
+            <mat-tab label="Description">
+                <div class="push-top-lg">
+                    <ng-template [ngTemplateOutlet]="descriptionTemplate"></ng-template>
+                </div>
+            </mat-tab>
+            <mat-tab label="Location">
+                <ng-template [ngTemplateOutlet]="locationTemplate"></ng-template>
+            </mat-tab>
+            <mat-tab label="Package information">sef</mat-tab>
+        </mat-tab-group>
+    </div>
+
 </div>
+
+<ng-template #locationTemplate>
+    <div class="mapouter pad-bottom-lg" *ngIf="googleMapUrl">
+        <div class="gmap_canvas"><iframe width="100%" height="500" id="gmap_canvas" [src]="googleMapUrl"
+                frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><a></a><br>
+            <style>
+                .mapouter {
+                    position: relative;
+                    text-align: right;
+                    height: 500px;
+                    width: 100%;
+                }
+            </style>
+            <style>
+                .gmap_canvas {
+                    overflow: hidden;
+                    background: none !important;
+                    height: 500px;
+                    width: 100%;
+                }
+            </style>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #descriptionTemplate>
+    <div *ngIf="hotel">
+
+        <app-description-section [title]="'Highlights'" [element]="hotel.elements.highlights"></app-description-section>
+        <app-description-section [title]="'About'" [element]="hotel.elements.location"></app-description-section>
+        <app-description-section [title]="'Food and Beverages'" [element]="hotel.elements.food___beverage">
+        </app-description-section>
+        <app-description-section [title]="'Sports'" [element]="hotel.elements.sports"></app-description-section>
+        <app-description-section [title]="'Children'" [element]="hotel.elements.children"></app-description-section>
+        <app-description-section [title]="'Pool'" [element]="hotel.elements.pool"></app-description-section>
+
+    </div>
+
+</ng-template>

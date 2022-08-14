@@ -14,10 +14,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTabsModule } from '@angular/material/tabs';
 import { LightgalleryModule } from 'lightgallery/angular';
+import { DescriptionSectionComponent } from './shared/description-section.component';
 
 @NgModule({
-  declarations: [AppComponent, HotelComponent, HomeComponent],
+  declarations: [
+    AppComponent,
+    HotelComponent,
+    HomeComponent,
+    DescriptionSectionComponent,
+  ],
   imports: [
     AppFlexModule,
     NgxFileDropModule,
@@ -29,6 +36,7 @@ import { LightgalleryModule } from 'lightgallery/angular';
     MatButtonModule,
     MatDividerModule,
     LightgalleryModule,
+    MatTabsModule,
     RouterModule.forRoot([
       {
         path: '',

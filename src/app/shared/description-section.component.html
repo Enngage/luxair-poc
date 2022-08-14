@@ -1,0 +1,12 @@
+<div *ngIf="element && element.value" class="push-bottom-lg">
+    <div libFlexRow [libFlexRowGap]="'8px'">
+        <div libFlexColumn>
+            <div class="w-description-title-box"></div>
+        </div>
+        <div libFlexColumn class="mat-title">
+            {{ title}}
+        </div>
+    </div>
+    <div class="push-top" class="push-bottom" [innerHtml]="element.value">
+    </div>
+</div>

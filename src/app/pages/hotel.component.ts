@@ -5,6 +5,7 @@ import { map } from 'rxjs';
 import { CoreComponent } from 'src/lib/core/core.component';
 import { Hotel } from '../models';
 import { KontentAiService } from '../services/kontent-ai.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-hotel',
@@ -18,9 +19,12 @@ export class HotelComponent extends CoreComponent implements OnInit {
     plugins: [],
   };
 
+  public googleMapUrl?: SafeUrl;
+
   constructor(
     private kontentAiService: KontentAiService,
     private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer,
     cdr: ChangeDetectorRef
   ) {
     super(cdr);
@@ -48,9 +52,16 @@ export class HotelComponent extends CoreComponent implements OnInit {
       this.kontentAiService.getHotel(codename).pipe(
         map((hotel) => {
           this.hotel = hotel;
+          this.googleMapUrl = this.getGoogleMapsUrl(hotel);
           super.markForCheck();
         })
       )
+    );
+  }
+
+  private getGoogleMapsUrl(hotel: Hotel): SafeUrl | undefined {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(
+      `https://maps.google.com/maps?q=${hotel.elements.lat.value},${hotel.elements.lng.value}&z=16&output=embed`
     );
   }
 }

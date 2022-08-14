@@ -10,6 +10,8 @@
 @include push-utilities();
 @include pull-utilities();
 
+$primaryColor: #3f51b5;
+
 .w-uploader {
   .w-uploader-dropzone {
     text-align: center;
@@ -81,4 +83,10 @@ img {
   img {
     cursor: pointer;
   }
+}
+
+.w-description-title-box {
+  width: 5px;
+  height: 20px;
+  background-color: $primaryColor;
 }
