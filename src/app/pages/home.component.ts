@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { map } from 'rxjs';
 import { CoreComponent } from 'src/lib/core/core.component';
@@ -12,11 +13,14 @@ import { KontentAiService } from '../services/kontent-ai.service';
 export class HomeComponent extends CoreComponent implements OnInit {
   public hotels?: Hotel[];
 
+  private readonly snackbarDuration = 4 * 1000;
+
   public isImporting: boolean = false;
   public isFetching: boolean = false;
 
   constructor(
     private kontentAiService: KontentAiService,
+    private _snackBar: MatSnackBar,
     cdr: ChangeDetectorRef
   ) {
     super(cdr);
@@ -24,6 +28,12 @@ export class HomeComponent extends CoreComponent implements OnInit {
 
   ngOnInit(): void {
     this.initHotels();
+  }
+
+  private openSnackBar(message: string): void {
+    this._snackBar.open(message, undefined, {
+      duration: this.snackbarDuration,
+    });
   }
 
   private initHotels(): void {
@@ -43,21 +53,26 @@ export class HomeComponent extends CoreComponent implements OnInit {
   async dropped(event: NgxFileDropEntry[]): Promise<void> {
     this.getFilesForUpload(event, async (files) => {
       if (files.length) {
-        this.isImporting = true;
-        super.markForCheck();
-        const fileToImport = files[0];
+        try {
+          this.isImporting = true;
+          super.markForCheck();
+          const fileToImport = files[0];
 
-        const data = await fileToImport.text();
+          const data = await fileToImport.text();
 
-        const response = await this.kontentAiService.importFromJson(
-          JSON.parse(data) as any
-        );
-        console.log('Imported', response);
+          const response = await this.kontentAiService.importFromJson(
+            JSON.parse(data) as any
+          );
+          console.log('Imported', response);
 
-        this.initHotels();
-
-        this.isImporting = false;
-        super.markForCheck();
+          this.isImporting = false;
+          super.markForCheck();
+          this.openSnackBar('Hotel has been imported successfully');
+        } catch (error) {
+          this.openSnackBar('Import failed');
+          this.isImporting = false;
+          super.markForCheck();
+        }
       }
     });
   }
