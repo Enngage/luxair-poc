@@ -1,4 +1,8 @@
-<div class="w-uploader">
+<div style="height:5px">
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+</div>
+
+<div class="w-uploader" *ngIf="!isLoading">
     <ngx-file-drop [contentClassName]="'w-uploader-content'" [dropZoneClassName]="'w-uploader-dropzone'"
         [multiple]="false" headertext="" (onFileDrop)="dropped($event)">
         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
@@ -17,13 +21,21 @@
 </div>
 
 <div class="push-top-lg">
-    <div libFlexRow *ngFor="let hotel of hotels; let first = first" [class.push-top]="!first">
+    <div class="w-card" libFlexRow *ngFor="let hotel of hotels; let first = first" [class.push-top]="!first">
+        <div libFlexColumn [libFlexSize]="'120px'" *ngIf="hotel.elements.images.value.length">
+            <img [src]="hotel.elements.images.value[0].url">
+        </div>
         <div libFlexColumn libFlexFill>
-            {{ hotel.elements.catalog_name}}
+            <div class="mat-title">
+                {{ hotel.system.name}}
+            </div>
+            <div class="caption">
+                {{ hotel.elements.city.value}} | <span
+                    *ngIf="hotel.elements.country.linkedItems.length">{{hotel.elements.country.linkedItems[0].system.name}}</span>
+            </div>
+        </div>
+        <div libFlexColumn>
+            <button [routerLink]="'/hotel'" mat-flat-button color="primary">Details</button>
         </div>
     </div>
-</div>
-
-<div>
-    <a [routerLink]="'/hotel'">View hotel</a>
 </div>

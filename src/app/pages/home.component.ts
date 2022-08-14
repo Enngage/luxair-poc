@@ -12,6 +12,8 @@ import { KontentAiService } from '../services/kontent-ai.service';
 export class HomeComponent extends CoreComponent implements OnInit {
   public hotels?: Hotel[];
 
+  public isLoading: boolean = false;
+
   constructor(
     private kontentAiService: KontentAiService,
     cdr: ChangeDetectorRef
@@ -37,12 +39,20 @@ export class HomeComponent extends CoreComponent implements OnInit {
   async dropped(event: NgxFileDropEntry[]): Promise<void> {
     this.getFilesForUpload(event, async (files) => {
       if (files.length) {
+        this.isLoading = true;
+        super.markForCheck();
         const fileToImport = files[0];
 
         const data = await fileToImport.text();
 
-        const response = await this.kontentAiService.importFromJson(JSON.parse(data) as any);
+        const response = await this.kontentAiService.importFromJson(
+          JSON.parse(data) as any
+        );
         console.log('Imported', response);
+
+        this.initHotels();
+
+        this.isLoading = false;
         super.markForCheck();
       }
     });

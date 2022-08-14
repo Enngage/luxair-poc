@@ -52,7 +52,7 @@ export class KontentAiService {
     return from(
       this.deliveryClient
         .items<Hotel>()
-        //.type(contentTypes.hotel.codename)
+        .type(contentTypes.hotel.codename)
         .orderByDescending('elements.created')
         .toPromise()
     ).pipe(

@@ -8,18 +8,6 @@
 @include push-utilities();
 @include pull-utilities();
 
-body {
-  font-family: "Noto Sans", sans-serif;
-  font-family: "Open Sans", sans-serif;
-  margin: 64px 24px;
-
-  .content-wrapper {
-    width: 1080px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
 .w-uploader {
   .w-uploader-dropzone {
     text-align: center;
@@ -39,4 +27,45 @@ body {
     font-size: 14px;
     opacity: 0.8;
   }
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 64px 24px;
+
+  .content-wrapper {
+    width: 1080px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  font-family: "Roboto", "Helvetica Neue", sans-serif;
+  padding: 24px;
+  background: rgb(245, 245, 248);
+}
+
+.w-card {
+  padding: 24px 32px;
+  border-radius: 10px;
+  background: #fff;
+  border: solid 1px rgb(228, 228, 234);
+}
+
+img {
+  border-radius: 10px;
+}
+
+.caption {
+  opacity: 0.7;
+  font-size: 13px;
+}
+
+.mat-title,
+.mat-display-1,
+.mat-display-2,
+.mat-display-3,
+.mat-display-4 {
+    margin-bottom: 0 !important;
 }

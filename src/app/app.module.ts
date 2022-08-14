@@ -8,6 +8,9 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home.component';
 import { HotelComponent } from './pages/hotel.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [AppComponent, HotelComponent, HomeComponent],
@@ -16,6 +19,8 @@ import { HotelComponent } from './pages/hotel.component';
     NgxFileDropModule,
     BrowserModule,
     AppRoutingModule,
+    MatProgressBarModule,
+    MatButtonModule,
     RouterModule.forRoot([
       {
         path: '',
@@ -23,6 +28,7 @@ import { HotelComponent } from './pages/hotel.component';
         pathMatch: 'full',
       },
     ]),
+    BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
