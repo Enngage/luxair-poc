@@ -11,6 +11,7 @@ import { HotelComponent } from './pages/hotel.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [AppComponent, HotelComponent, HomeComponent],
@@ -20,6 +21,7 @@ import { MatButtonModule } from '@angular/material/button';
     BrowserModule,
     AppRoutingModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
     MatButtonModule,
     RouterModule.forRoot([
       {

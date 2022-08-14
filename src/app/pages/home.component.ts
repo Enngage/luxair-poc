@@ -12,7 +12,8 @@ import { KontentAiService } from '../services/kontent-ai.service';
 export class HomeComponent extends CoreComponent implements OnInit {
   public hotels?: Hotel[];
 
-  public isLoading: boolean = false;
+  public isImporting: boolean = false;
+  public isFetching: boolean = false;
 
   constructor(
     private kontentAiService: KontentAiService,
@@ -26,10 +27,13 @@ export class HomeComponent extends CoreComponent implements OnInit {
   }
 
   private initHotels(): void {
+    this.isFetching = true;
+    super.markForCheck();
     super.subscribeToObservable(
       this.kontentAiService.getHotels().pipe(
         map((hotels) => {
           this.hotels = hotels;
+          this.isFetching = false;
           super.markForCheck();
         })
       )
@@ -39,7 +43,7 @@ export class HomeComponent extends CoreComponent implements OnInit {
   async dropped(event: NgxFileDropEntry[]): Promise<void> {
     this.getFilesForUpload(event, async (files) => {
       if (files.length) {
-        this.isLoading = true;
+        this.isImporting = true;
         super.markForCheck();
         const fileToImport = files[0];
 
@@ -52,7 +56,7 @@ export class HomeComponent extends CoreComponent implements OnInit {
 
         this.initHotels();
 
-        this.isLoading = false;
+        this.isImporting = false;
         super.markForCheck();
       }
     });

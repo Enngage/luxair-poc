@@ -1,8 +1,8 @@
 <div style="height:5px">
-    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar *ngIf="isImporting" mode="indeterminate"></mat-progress-bar>
 </div>
 
-<div class="w-uploader" *ngIf="!isLoading">
+<div class="w-uploader" *ngIf="!isImporting">
     <ngx-file-drop [contentClassName]="'w-uploader-content'" [dropZoneClassName]="'w-uploader-dropzone'"
         [multiple]="false" headertext="" (onFileDrop)="dropped($event)">
         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
@@ -21,7 +21,19 @@
 </div>
 
 <div class="push-top-lg">
-    <div class="w-card" libFlexRow *ngFor="let hotel of hotels; let first = first" [class.push-top]="!first">
+
+    <div libFlexRow>
+        <div libFlexColumn libFlexFill>
+            <div class="mat-subheading-2">
+                Browse Hotels
+            </div>
+        </div>
+        <div libFlexColumn *ngIf="isFetching">
+            <mat-spinner [diameter]="15"></mat-spinner>
+        </div>
+    </div>
+
+    <div class="w-card" libFlexRow *ngFor="let hotel of hotels; let first = first" [class.push-top]="true">
         <div libFlexColumn [libFlexSize]="'120px'" *ngIf="hotel.elements.images.value.length">
             <img [src]="hotel.elements.images.value[0].url">
         </div>
