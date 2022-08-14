@@ -67,19 +67,29 @@
                     <ng-template [ngTemplateOutlet]="descriptionTemplate"></ng-template>
                 </div>
             </mat-tab>
-            <mat-tab label="Location">
-                <ng-template [ngTemplateOutlet]="locationTemplate"></ng-template>
+            <mat-tab label="Rooms">
+                <div class="push-top-lg">
+                    <ng-template [ngTemplateOutlet]="roomsTemplate"></ng-template>
+                </div>
             </mat-tab>
-            <mat-tab label="Package information">sef</mat-tab>
+            <mat-tab label="Location">
+                <div class="push-top-lg">
+                    <ng-template [ngTemplateOutlet]="locationTemplate"></ng-template>
+                </div>
+            </mat-tab>
+            <mat-tab label="Package information">
+                <div class="push-top-lg">
+                    <ng-template [ngTemplateOutlet]="packageInformationTemplate"></ng-template>
+                </div>
+            </mat-tab>
         </mat-tab-group>
     </div>
-
 </div>
 
 <ng-template #locationTemplate>
     <div class="mapouter pad-bottom-lg" *ngIf="googleMapUrl">
-        <div class="gmap_canvas"><iframe width="100%" height="500" id="gmap_canvas" [src]="googleMapUrl"
-                frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><a></a><br>
+        <div class="gmap_canvas"><iframe width="100%" height="500" id="gmap_canvas" [src]="googleMapUrl" frameborder="0"
+                scrolling="no" marginheight="0" marginwidth="0"></iframe><a></a><br>
             <style>
                 .mapouter {
                     position: relative;
@@ -102,7 +112,6 @@
 
 <ng-template #descriptionTemplate>
     <div *ngIf="hotel">
-
         <app-description-section [title]="'Highlights'" [element]="hotel.elements.highlights"></app-description-section>
         <app-description-section [title]="'About'" [element]="hotel.elements.location"></app-description-section>
         <app-description-section [title]="'Food and Beverages'" [element]="hotel.elements.food___beverage">
@@ -110,7 +119,45 @@
         <app-description-section [title]="'Sports'" [element]="hotel.elements.sports"></app-description-section>
         <app-description-section [title]="'Children'" [element]="hotel.elements.children"></app-description-section>
         <app-description-section [title]="'Pool'" [element]="hotel.elements.pool"></app-description-section>
+    </div>
+</ng-template>
+
+<ng-template #packageInformationTemplate>
+    <div *ngIf="hotel">
+        <app-description-section [title]="'INCLUDED IN PACKAGE TRIP'" [element]="hotel.elements.included_in_package">
+        </app-description-section>
+    </div>
+</ng-template>
+
+<ng-template #roomsTemplate>
+    <div *ngIf="hotel">
+        <div *ngFor="let roomGroup of hotel.elements.room_groups.linkedItems">
+            <div libFlexRow [libFlexRowGap]="'8px'">
+                <div libFlexColumn>
+                    <div class="w-description-title-box"></div>
+                </div>
+                <div libFlexColumn class="mat-title" *ngIf="roomGroup.elements.accommodation_type.value.length">
+                    {{ roomGroup.elements.accommodation_type.value[0].name}}
+                </div>
+            </div>
+            <div class="push-top">
+                {{ roomGroup.elements.description.value}}
+            </div>
+
+            <div class="push-top" *ngFor="let room of roomGroup.elements.rooms.linkedItems">
+                <div class="w-card">
+                    <div class="mat-body-2">
+                        {{ room.system.name}}
+                    </div>
+                    <div>
+                        {{ room.elements.long_description.value}}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
 
     </div>
-
 </ng-template>
