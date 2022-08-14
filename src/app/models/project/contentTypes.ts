@@ -447,7 +447,7 @@ export const contentTypes = {
 
   /**
    * Room
-   * Last modified: Fri Aug 12 2022 08:26:05 GMT+0200 (Central European Summer Time)
+   * Last modified: Sun Aug 14 2022 19:57:58 GMT+0200 (Central European Summer Time)
    */
   room: {
     codename: 'room',
@@ -455,6 +455,19 @@ export const contentTypes = {
     externalId: undefined,
     name: 'Room',
     elements: {
+      /**
+       * Name (text)
+       */
+      name: {
+        codename: 'name',
+        id: 'ec770f62-00ba-4980-b633-bf1f973f28af',
+        externalId: undefined,
+        name: 'Name',
+        required: true,
+        type: 'text',
+        snippetCodename: undefined,
+      },
+
       /**
        * Code (text)
        */

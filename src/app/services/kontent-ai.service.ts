@@ -645,6 +645,12 @@ export class KontentAiService {
           return [
             builder.textElement({
               element: {
+                codename: contentTypes.room.elements.name.codename,
+              },
+              value: rawRoom.name
+            }),
+            builder.textElement({
+              element: {
                 codename: contentTypes.room.elements.code.codename,
               },
               value: rawRoom.code,

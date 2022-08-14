@@ -124,7 +124,7 @@
 
 <ng-template #packageInformationTemplate>
     <div *ngIf="hotel">
-        <app-description-section [title]="'INCLUDED IN PACKAGE TRIP'" [element]="hotel.elements.included_in_package">
+        <app-description-section [title]="'Included in package trip'" [element]="hotel.elements.included_in_package">
         </app-description-section>
     </div>
 </ng-template>
@@ -147,7 +147,7 @@
             <div class="push-top" *ngFor="let room of roomGroup.elements.rooms.linkedItems">
                 <div class="w-card">
                     <div class="mat-body-2">
-                        {{ room.system.name}}
+                        {{ room.elements.name.value}}
                     </div>
                     <div>
                         {{ room.elements.long_description.value}}
@@ -156,8 +156,5 @@
             </div>
 
         </div>
-
-
-
     </div>
 </ng-template>

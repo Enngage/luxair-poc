@@ -8,6 +8,14 @@ import { IContentItem, Elements } from '@kontent-ai/delivery-sdk';
  */
 export type Room = IContentItem<{
   /**
+   * Name (text)
+   * Required: true
+   * Id: ec770f62-00ba-4980-b633-bf1f973f28af
+   * Codename: name
+   */
+  name: Elements.TextElement;
+
+  /**
    * Code (text)
    * Required: true
    * Id: 6316821a-e215-4de1-ad40-2aa86015c9e5
