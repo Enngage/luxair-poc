@@ -43,6 +43,14 @@ export class KontentAiService {
     });
   }
 
+  getProjectId(): string {
+    return this.projectId;
+  }
+
+  getLanguageCodename(): string {
+    return languages.default.codename;
+  }
+
   getHotel(codename: string): Observable<Hotel> {
     return from(
       this.deliveryClient.item<Hotel>(codename).depthParameter(3).toPromise()

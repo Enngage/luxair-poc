@@ -1,9 +1,18 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  AfterViewChecked,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import KontentSmartLink, {
+  KontentSmartLinkEvent,
+} from '@kentico/kontent-smart-link';
 import { ActivatedRoute } from '@angular/router';
 import { ElementModels } from '@kontent-ai/delivery-sdk';
 import { map } from 'rxjs';
 import { CoreComponent } from 'src/lib/core/core.component';
-import { Hotel } from '../models';
+import { contentTypes, Hotel } from '../models';
 import { KontentAiService } from '../services/kontent-ai.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
@@ -11,7 +20,10 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   selector: 'app-hotel',
   templateUrl: './hotel.component.html',
 })
-export class HotelComponent extends CoreComponent implements OnInit {
+export class HotelComponent
+  extends CoreComponent
+  implements OnInit, AfterViewChecked, OnDestroy
+{
   public hotel?: Hotel;
 
   public settings = {
@@ -20,6 +32,18 @@ export class HotelComponent extends CoreComponent implements OnInit {
   };
 
   public googleMapUrl?: SafeUrl;
+  public itemCodename?: string;
+
+  public get itemId(): string | undefined {
+    return this.hotel?.system.id;
+  }
+
+  public hotelElements = contentTypes.hotel.elements;
+  public roomGroupElements = contentTypes.room_group.elements;
+  public roomElements = contentTypes.room.elements;
+
+  private initSmartlinkSdk: boolean = false;
+  private smartLinkSdk?: KontentSmartLink;
 
   constructor(
     private kontentAiService: KontentAiService,
@@ -38,13 +62,29 @@ export class HotelComponent extends CoreComponent implements OnInit {
     super.subscribeToObservable(
       this.activatedRoute.params.pipe(
         map((params) => {
-          console.log(params);
           if (params['codename']) {
-            this.initHotel(params['codename']);
+            const codename = params['codename'];
+            this.itemCodename = codename;
+            this.initHotel(codename);
           }
         })
       )
     );
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.initSmartlinkSdk) {
+      this.initSmartlinkSdk = false;
+      this.initSmartLinks();
+    }
+  }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
+
+    if (this.smartLinkSdk) {
+      this.smartLinkSdk.destroy();
+    }
   }
 
   initHotel(codename: string): void {
@@ -53,10 +93,15 @@ export class HotelComponent extends CoreComponent implements OnInit {
         map((hotel) => {
           this.hotel = hotel;
           this.googleMapUrl = this.getGoogleMapsUrl(hotel);
+          this.initSmartlinkSdk = true;
           super.markForCheck();
         })
       )
     );
+  }
+
+  private initSmartLinks(): void {
+    this.smartLinkSdk = KontentSmartLink.initialize({});
   }
 
   private getGoogleMapsUrl(hotel: Hotel): SafeUrl | undefined {

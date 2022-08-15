@@ -1,4 +1,4 @@
-<div *ngIf="element && element.value" class="push-bottom-lg">
+<div *ngIf="element && element.value" class="push-bottom-lg" [attr.data-kontent-element-codename]="elementCodename">
     <div libFlexRow [libFlexRowGap]="'8px'">
         <div libFlexColumn>
             <div class="w-description-title-box"></div>

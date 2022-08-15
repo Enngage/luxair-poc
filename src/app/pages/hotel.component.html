@@ -1,130 +1,149 @@
-<div *ngIf="!hotel">
-    <div style="height:5px">
-        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+<div [attr.data-kontent-item-id]="itemId">
+
+    <div *ngIf="!hotel">
+        <div style="height:5px">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
     </div>
-</div>
-<div *ngIf="hotel">
-    <div class="push-top-md push-bottom-md">
-        <mat-divider></mat-divider>
-    </div>
-    <div class="mat-headline">
-        {{ hotel.system.name}}
-    </div>
-    <div libFlexRow class="push-top-sm">
-        <div libFlexColumn>
-            <div class="caption">
-                {{ hotel.elements.city.value}} | <span
-                    *ngIf="hotel.elements.country.linkedItems.length">{{hotel.elements.country.linkedItems[0].system.name}}</span>
+    <div *ngIf="hotel">
+        <div class="push-top-md push-bottom-md">
+            <mat-divider></mat-divider>
+        </div>
+        <div class="mat-headline">
+            {{ hotel.system.name}}
+        </div>
+        <div libFlexRow class="push-top-sm" [libFlexRowGap]="'0px'">
+            <div [attr.data-kontent-element-codename]="hotelElements.country.codename"
+                *ngIf="hotel.elements.country.linkedItems.length" class="caption">
+                {{hotel.elements.country.linkedItems[0].system.name}},&nbsp;
+            </div>
+            <div libFlexColumn class="caption" [attr.data-kontent-element-codename]="hotelElements.city.codename">
+                {{ hotel.elements.city.value}},&nbsp;
+            </div>
+            <div libFlexColumn class="caption"
+                [attr.data-kontent-element-codename]="hotelElements.destination_name.codename">
+                {{ hotel.elements.destination_name.value}}
+            </div>
+            <div libFlexColumn>
+                <img [src]="hotel.elements.trip_advisor_icon_url.value">
             </div>
         </div>
-        <div libFlexColumn>
-            <img [src]="hotel.elements.trip_advisor_icon_url.value">
+
+        <div class="push-top-md w-gallery-wrapper">
+            <div libFlexRow [libFlexRowGap]="'8px'" [libFlexRowAlign]="'start'">
+                <div libFlexColumn [libFlexSize]="60" *ngIf="hotel.elements.images.value.length">
+                    <lightgallery [settings]="settings">
+                        <a [href]="hotel.elements.images.value[0].url">
+                            <img [src]="getGalleryThumbnailImageUrl(hotel.elements.images.value[0])">
+                        </a>
+                    </lightgallery>
+                </div>
+                <div libFlexColumn [libFlexSize]="'fill'" *ngIf="hotel.elements.images.value.length >= 2">
+                    <div [libFlexRow]="true" [libFlexRowGap]="'8px'" [libFlexRowAlign]="'start'">
+                        <div libFlexColumn [libFlexSize]="'full'">
+                            <lightgallery [settings]="settings">
+                                <a [href]="hotel.elements.images.value[1].url">
+                                    <img [src]="getGalleryThumbnailImageUrl(hotel.elements.images.value[1])">
+                                </a>
+                            </lightgallery>
+                        </div>
+                        <div libFlexColumn [libFlexSize]="'fill'" *ngIf="hotel.elements.images.value.length >= 3">
+                            <lightgallery [settings]="settings">
+                                <a [href]="hotel.elements.images.value[2].url">
+                                    <img [src]="getGalleryThumbnailImageUrl(hotel.elements.images.value[2])">
+                                </a>
+                            </lightgallery>
+                        </div>
+                        <div libFlexColumn [libFlexSize]="'fill'" *ngIf="hotel.elements.images.value.length >= 4">
+                            <lightgallery [settings]="settings">
+                                <a [href]="hotel.elements.images.value[3].url">
+                                    <img [src]="getGalleryThumbnailImageUrl(hotel.elements.images.value[3])">
+                                </a>
+                            </lightgallery>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="push-top-md">
+            <mat-tab-group mat-align-tabs="start">
+                <mat-tab label="Description">
+                    <div class="push-top-lg">
+                        <ng-template [ngTemplateOutlet]="descriptionTemplate"></ng-template>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Rooms">
+                    <div class="push-top-lg">
+                        <ng-template [ngTemplateOutlet]="roomsTemplate"></ng-template>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Location">
+                    <div class="push-top-lg">
+                        <ng-template [ngTemplateOutlet]="locationTemplate"></ng-template>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Package information">
+                    <div class="push-top-lg">
+                        <ng-template [ngTemplateOutlet]="packageInformationTemplate"></ng-template>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
         </div>
     </div>
 
-    <div class="push-top-md w-gallery-wrapper">
-        <div libFlexRow [libFlexRowGap]="'8px'" [libFlexRowAlign]="'start'">
-            <div libFlexColumn [libFlexSize]="60" *ngIf="hotel.elements.images.value.length">
-                <lightgallery [settings]="settings">
-                    <a [href]="hotel.elements.images.value[0].url">
-                        <img [src]="getGalleryThumbnailImageUrl(hotel.elements.images.value[0])">
-                    </a>
-                </lightgallery>
-            </div>
-            <div libFlexColumn [libFlexSize]="'fill'" *ngIf="hotel.elements.images.value.length >= 2">
-                <div [libFlexRow]="true" [libFlexRowGap]="'8px'" [libFlexRowAlign]="'start'">
-                    <div libFlexColumn [libFlexSize]="'full'">
-                        <lightgallery [settings]="settings">
-                            <a [href]="hotel.elements.images.value[1].url">
-                                <img [src]="getGalleryThumbnailImageUrl(hotel.elements.images.value[1])">
-                            </a>
-                        </lightgallery>
-                    </div>
-                    <div libFlexColumn [libFlexSize]="'fill'" *ngIf="hotel.elements.images.value.length >= 3">
-                        <lightgallery [settings]="settings">
-                            <a [href]="hotel.elements.images.value[2].url">
-                                <img [src]="getGalleryThumbnailImageUrl(hotel.elements.images.value[2])">
-                            </a>
-                        </lightgallery>
-                    </div>
-                    <div libFlexColumn [libFlexSize]="'fill'" *ngIf="hotel.elements.images.value.length >= 4">
-                        <lightgallery [settings]="settings">
-                            <a [href]="hotel.elements.images.value[3].url">
-                                <img [src]="getGalleryThumbnailImageUrl(hotel.elements.images.value[3])">
-                            </a>
-                        </lightgallery>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <div class="push-top-md">
-        <mat-tab-group mat-align-tabs="start">
-            <mat-tab label="Description">
-                <div class="push-top-lg">
-                    <ng-template [ngTemplateOutlet]="descriptionTemplate"></ng-template>
-                </div>
-            </mat-tab>
-            <mat-tab label="Rooms">
-                <div class="push-top-lg">
-                    <ng-template [ngTemplateOutlet]="roomsTemplate"></ng-template>
-                </div>
-            </mat-tab>
-            <mat-tab label="Location">
-                <div class="push-top-lg">
-                    <ng-template [ngTemplateOutlet]="locationTemplate"></ng-template>
-                </div>
-            </mat-tab>
-            <mat-tab label="Package information">
-                <div class="push-top-lg">
-                    <ng-template [ngTemplateOutlet]="packageInformationTemplate"></ng-template>
-                </div>
-            </mat-tab>
-        </mat-tab-group>
-    </div>
 </div>
 
 <ng-template #locationTemplate>
-    <div class="mapouter pad-bottom-lg" *ngIf="googleMapUrl">
-        <div class="gmap_canvas"><iframe width="100%" height="500" id="gmap_canvas" [src]="googleMapUrl" frameborder="0"
-                scrolling="no" marginheight="0" marginwidth="0"></iframe><a></a><br>
-            <style>
-                .mapouter {
-                    position: relative;
-                    text-align: right;
-                    height: 500px;
-                    width: 100%;
-                }
-            </style>
-            <style>
-                .gmap_canvas {
-                    overflow: hidden;
-                    background: none !important;
-                    height: 500px;
-                    width: 100%;
-                }
-            </style>
+    <div [attr.data-kontent-element-codename]="hotelElements.lat.codename">
+        <div class="mapouter pad-bottom-lg" *ngIf="googleMapUrl">
+            <div class="gmap_canvas"><iframe width="100%" height="500" id="gmap_canvas" [src]="googleMapUrl"
+                    frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><a></a><br>
+                <style>
+                    .mapouter {
+                        position: relative;
+                        text-align: right;
+                        height: 500px;
+                        width: 100%;
+                    }
+                </style>
+                <style>
+                    .gmap_canvas {
+                        overflow: hidden;
+                        background: none !important;
+                        height: 500px;
+                        width: 100%;
+                    }
+                </style>
+            </div>
         </div>
     </div>
 </ng-template>
 
 <ng-template #descriptionTemplate>
     <div *ngIf="hotel">
-        <app-description-section [title]="'Highlights'" [element]="hotel.elements.highlights"></app-description-section>
-        <app-description-section [title]="'About'" [element]="hotel.elements.location"></app-description-section>
-        <app-description-section [title]="'Food and Beverages'" [element]="hotel.elements.food___beverage">
+        <app-description-section [title]="'Highlights'" [elementCodename]="hotelElements.highlights.codename"
+            [element]="hotel.elements.highlights"></app-description-section>
+        <app-description-section [title]="'About'" [elementCodename]="hotelElements.location.codename"
+            [element]="hotel.elements.location"></app-description-section>
+        <app-description-section [title]="'Food and Beverages'"
+            [elementCodename]="hotelElements.food___beverage.codename" [element]="hotel.elements.food___beverage">
         </app-description-section>
-        <app-description-section [title]="'Sports'" [element]="hotel.elements.sports"></app-description-section>
-        <app-description-section [title]="'Children'" [element]="hotel.elements.children"></app-description-section>
-        <app-description-section [title]="'Pool'" [element]="hotel.elements.pool"></app-description-section>
+        <app-description-section [title]="'Sports'" [elementCodename]="hotelElements.sports.codename"
+            [element]="hotel.elements.sports"></app-description-section>
+        <app-description-section [title]="'Children'" [elementCodename]="hotelElements.children.codename"
+            [element]="hotel.elements.children"></app-description-section>
+        <app-description-section [title]="'Pool'" [elementCodename]="hotelElements.pool.codename"
+            [element]="hotel.elements.pool"></app-description-section>
     </div>
 </ng-template>
 
 <ng-template #packageInformationTemplate>
     <div *ngIf="hotel">
-        <app-description-section [title]="'Included in package trip'" [element]="hotel.elements.included_in_package">
+        <app-description-section [title]="'Included in package trip'"
+            [elementCodename]="hotelElements.included_in_package.codename"
+            [element]="hotel.elements.included_in_package">
         </app-description-section>
     </div>
 </ng-template>
@@ -132,20 +151,22 @@
 <ng-template #roomsTemplate>
     <div *ngIf="hotel">
         <div *ngFor="let roomGroup of hotel.elements.room_groups.linkedItems">
-            <div libFlexRow [libFlexRowGap]="'8px'">
-                <div libFlexColumn>
-                    <div class="w-description-title-box"></div>
+            <div [attr.data-kontent-item-id]="roomGroup.system.id">
+                <div libFlexRow [libFlexRowGap]="'8px'">
+                    <div libFlexColumn>
+                        <div class="w-description-title-box"></div>
+                    </div>
+                    <div libFlexColumn class="mat-title" *ngIf="roomGroup.elements.accommodation_type.value.length">
+                        {{ roomGroup.elements.accommodation_type.value[0].name}}
+                    </div>
                 </div>
-                <div libFlexColumn class="mat-title" *ngIf="roomGroup.elements.accommodation_type.value.length">
-                    {{ roomGroup.elements.accommodation_type.value[0].name}}
+                <div class="push-top">
+                    {{ roomGroup.elements.description.value}}
                 </div>
-            </div>
-            <div class="push-top">
-                {{ roomGroup.elements.description.value}}
             </div>
 
             <div class="push-top" *ngFor="let room of roomGroup.elements.rooms.linkedItems">
-                <div class="w-card">
+                <div class="w-card" [attr.data-kontent-item-id]="room.system.id">
                     <div class="mat-body-2">
                         {{ room.elements.name.value}}
                     </div>

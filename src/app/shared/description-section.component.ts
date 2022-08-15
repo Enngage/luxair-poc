@@ -12,6 +12,7 @@ export class DescriptionSectionComponent
 {
   @Input() element?: Elements.RichTextElement;
   @Input() title?: string;
+  @Input() elementCodename?: string;
 
   constructor(private activatedRoute: ActivatedRoute, cdr: ChangeDetectorRef) {
     super(cdr);
