@@ -5,9 +5,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import KontentSmartLink, {
-  KontentSmartLinkEvent,
-} from '@kentico/kontent-smart-link';
+
 import { ActivatedRoute } from '@angular/router';
 import { ElementModels } from '@kontent-ai/delivery-sdk';
 import { map } from 'rxjs';
@@ -22,7 +20,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 })
 export class HotelComponent
   extends CoreComponent
-  implements OnInit, AfterViewChecked, OnDestroy
+  implements OnInit
 {
   public hotel?: Hotel;
 
@@ -41,9 +39,6 @@ export class HotelComponent
   public hotelElements = contentTypes.hotel.elements;
   public roomGroupElements = contentTypes.room_group.elements;
   public roomElements = contentTypes.room.elements;
-
-  private initSmartlinkSdk: boolean = false;
-  private smartLinkSdk?: KontentSmartLink;
 
   constructor(
     private kontentAiService: KontentAiService,
@@ -72,20 +67,7 @@ export class HotelComponent
     );
   }
 
-  ngAfterViewChecked(): void {
-    if (this.initSmartlinkSdk) {
-      this.initSmartlinkSdk = false;
-      this.initSmartLinks();
-    }
-  }
 
-  override ngOnDestroy(): void {
-    super.ngOnDestroy();
-
-    if (this.smartLinkSdk) {
-      this.smartLinkSdk.destroy();
-    }
-  }
 
   initHotel(codename: string): void {
     super.subscribeToObservable(
@@ -93,15 +75,11 @@ export class HotelComponent
         map((hotel) => {
           this.hotel = hotel;
           this.googleMapUrl = this.getGoogleMapsUrl(hotel);
-          this.initSmartlinkSdk = true;
+          super.initSmartLinks();
           super.markForCheck();
         })
       )
     );
-  }
-
-  private initSmartLinks(): void {
-    this.smartLinkSdk = KontentSmartLink.initialize({});
   }
 
   private getGoogleMapsUrl(hotel: Hotel): SafeUrl | undefined {

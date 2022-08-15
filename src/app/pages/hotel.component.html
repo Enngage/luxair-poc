@@ -29,7 +29,7 @@
             </div>
         </div>
 
-        <div class="push-top-md w-gallery-wrapper">
+        <div class="push-top-md w-gallery-wrapper" [attr.data-kontent-element-codename]="hotelElements.images.codename">
             <div libFlexRow [libFlexRowGap]="'8px'" [libFlexRowAlign]="'start'">
                 <div libFlexColumn [libFlexSize]="60" *ngIf="hotel.elements.images.value.length">
                     <lightgallery [settings]="settings">

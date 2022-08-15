@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { map } from 'rxjs';
 import { CoreComponent } from 'src/lib/core/core.component';
-import { Hotel } from '../models';
+import { contentTypes, Hotel, HotelListing } from '../models';
 import { KontentAiService } from '../services/kontent-ai.service';
 
 @Component({
@@ -12,11 +12,14 @@ import { KontentAiService } from '../services/kontent-ai.service';
 })
 export class HomeComponent extends CoreComponent implements OnInit {
   public hotels?: Hotel[];
+  public hotelListing?: HotelListing;
 
   private readonly snackbarDuration = 4 * 1000;
 
   public isImporting: boolean = false;
   public isFetching: boolean = false;
+
+  public hotelListingElements = contentTypes.hotel_listing.elements;
 
   constructor(
     private kontentAiService: KontentAiService,
@@ -28,6 +31,19 @@ export class HomeComponent extends CoreComponent implements OnInit {
 
   ngOnInit(): void {
     this.initHotels();
+    this.initHotelListing();
+  }
+
+  initHotelListing(): void {
+    super.subscribeToObservable(
+      this.kontentAiService.getHotelListing().pipe(
+        map((hotelListing) => {
+          this.hotelListing = hotelListing;
+          super.initSmartLinks();
+          super.markForCheck();
+        })
+      )
+    );
   }
 
   getHotelRouterLink(hotel: Hotel): string {

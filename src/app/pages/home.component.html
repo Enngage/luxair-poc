@@ -20,7 +20,7 @@
     </ngx-file-drop>
 </div>
 
-<div class="push-top-lg">
+<div class="push-top-lg" [attr.data-kontent-item-id]="hotelListing?.system?.id">
 
     <div libFlexRow>
         <div libFlexColumn libFlexFill>
@@ -33,21 +33,24 @@
         </div>
     </div>
 
-    <div class="w-card" libFlexRow *ngFor="let hotel of hotels; let first = first" [class.push-top]="true">
-        <div libFlexColumn [libFlexSize]="'120px'" *ngIf="hotel.elements.images.value.length">
-            <img [src]="hotel.elements.images.value[0].url">
-        </div>
-        <div libFlexColumn libFlexFill>
-            <div class="mat-title">
-                {{ hotel.system.name}}
+    <div>
+        <div [attr.data-kontent-item-id]="hotel?.system?.id" class="w-card" libFlexRow
+            *ngFor="let hotel of hotels; let first = first" [class.push-top]="true">
+            <div libFlexColumn [libFlexSize]="'120px'" *ngIf="hotel.elements.images.value.length">
+                <img [src]="hotel.elements.images.value[0].url">
             </div>
-            <div class="caption">
-                {{ hotel.elements.city.value}} | <span
-                    *ngIf="hotel.elements.country.linkedItems.length">{{hotel.elements.country.linkedItems[0].system.name}}</span>
+            <div libFlexColumn libFlexFill>
+                <div class="mat-title">
+                    {{ hotel.system.name}}
+                </div>
+                <div class="caption">
+                    {{ hotel.elements.city.value}} | <span
+                        *ngIf="hotel.elements.country.linkedItems.length">{{hotel.elements.country.linkedItems[0].system.name}}</span>
+                </div>
             </div>
-        </div>
-        <div libFlexColumn>
-            <button [routerLink]="getHotelRouterLink(hotel)" mat-flat-button color="primary">Details</button>
+            <div libFlexColumn>
+                <button [routerLink]="getHotelRouterLink(hotel)" mat-flat-button color="primary">Details</button>
+            </div>
         </div>
     </div>
 </div>

@@ -7,6 +7,82 @@
  */
 export const contentTypes = {
   /**
+   * Homepage
+   * Last modified: Mon Aug 15 2022 09:32:41 GMT+0200 (Central European Summer Time)
+   */
+  homepage: {
+    codename: 'homepage',
+    id: '553068b7-7051-4db8-9da0-13184bb7068b',
+    externalId: undefined,
+    name: 'Homepage',
+    elements: {
+      /**
+       * Title (text)
+       */
+      title: {
+        codename: 'title',
+        id: '28eef3ca-b4b7-4e35-8817-4b2089d1b5ec',
+        externalId: undefined,
+        name: 'Title',
+        required: false,
+        type: 'text',
+        snippetCodename: undefined,
+      },
+
+      /**
+       * Subpages (subpages)
+       */
+      subpages: {
+        codename: 'subpages',
+        id: '46868dc4-8a36-467f-86af-39454d4b7c07',
+        externalId: undefined,
+        name: 'Subpages',
+        required: false,
+        type: 'subpages',
+        snippetCodename: undefined,
+      },
+
+      /**
+       * Content (modular_content)
+       */
+      content: {
+        codename: 'content',
+        id: 'f80abb51-a52f-48aa-b79e-8d48e974d3c1',
+        externalId: undefined,
+        name: 'Content',
+        required: false,
+        type: 'modular_content',
+        snippetCodename: undefined,
+      },
+    },
+  },
+
+  /**
+   * Hotel listing
+   * Last modified: Mon Aug 15 2022 09:35:27 GMT+0200 (Central European Summer Time)
+   */
+  hotel_listing: {
+    codename: 'hotel_listing',
+    id: 'b12c495b-d756-4050-85b0-d2bbcedd463e',
+    externalId: undefined,
+    name: 'Hotel listing',
+    elements: {
+      /**
+       * Subpages (subpages)
+       */
+      subpages: {
+        codename: 'subpages',
+        id: '1bdf7cda-bb1b-4e02-9a70-06b3c92474fd',
+        externalId: undefined,
+        name: 'Subpages',
+        required: false,
+        type: 'subpages',
+        snippetCodename: undefined,
+      },
+    },
+  },
+
+  /**
    * Country
    * Last modified: Fri Aug 12 2022 08:36:39 GMT+0200 (Central European Summer Time)
    */

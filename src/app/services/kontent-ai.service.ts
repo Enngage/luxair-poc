@@ -11,7 +11,13 @@ import {
   WorkflowContracts,
 } from '@kontent-ai/management-sdk';
 import { from, map, Observable } from 'rxjs';
-import { contentTypes, Hotel, languages, taxonomies } from '../models';
+import {
+  contentTypes,
+  Hotel,
+  HotelListing,
+  languages,
+  taxonomies,
+} from '../models';
 import { RawJson } from './json.model';
 
 @Injectable({
@@ -49,6 +55,23 @@ export class KontentAiService {
 
   getLanguageCodename(): string {
     return languages.default.codename;
+  }
+
+  getHotelListing(): Observable<HotelListing | undefined> {
+    return from(
+      this.deliveryClient
+        .items<HotelListing>()
+        .type(contentTypes.hotel_listing.codename)
+        .depthParameter(0)
+        .toPromise()
+    ).pipe(
+      map((response) => {
+        if (response.data.items.length) {
+          return response.data.items[0];
+        }
+        return undefined;
+      })
+    );
   }
 
   getHotel(codename: string): Observable<Hotel> {
@@ -329,13 +352,13 @@ export class KontentAiService {
           element: {
             codename: hotelElements.trip_advisor_score.codename,
           },
-          value: hotel.ratings.tripAdvisor.score
+          value: hotel.ratings.tripAdvisor.score,
         }),
         builder.textElement({
           element: {
             codename: hotelElements.trip_advisor_icon_url.codename,
           },
-          value: hotel.ratings.tripAdvisor.icon
+          value: hotel.ratings.tripAdvisor.icon,
         }),
       ])
       .toPromise();
@@ -655,7 +678,7 @@ export class KontentAiService {
               element: {
                 codename: contentTypes.room.elements.name.codename,
               },
-              value: rawRoom.name
+              value: rawRoom.name,
             }),
             builder.textElement({
               element: {

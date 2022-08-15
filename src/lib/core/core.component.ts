@@ -1,15 +1,19 @@
 import {
+  AfterViewChecked,
   ChangeDetectorRef,
   Directive,
   HostBinding,
   OnDestroy,
 } from '@angular/core';
+import KontentSmartLink, {
+  KontentSmartLinkEvent,
+} from '@kentico/kontent-smart-link';
 import { Observable, Subject, Subscription, throwError } from 'rxjs';
 import { catchError, map, takeUntil } from 'rxjs/operators';
 import { observableHelper } from '../helpers/observable-helper.class';
 
 @Directive()
-export abstract class CoreComponent implements OnDestroy {
+export abstract class CoreComponent implements OnDestroy, AfterViewChecked {
   @HostBinding('style') style = 'display: block';
 
   /*
@@ -19,11 +23,25 @@ export abstract class CoreComponent implements OnDestroy {
    */
   protected readonly ngUnsubscribe_: Subject<void> = new Subject<void>();
 
+  private initSmartlinkSdk: boolean = false;
+  private smartLinkSdk?: KontentSmartLink;
+
   constructor(protected cdr: ChangeDetectorRef) {}
 
   ngOnDestroy(): void {
     this.ngUnsubscribe_.next();
     this.ngUnsubscribe_.complete();
+
+    if (this.smartLinkSdk) {
+      this.smartLinkSdk.destroy();
+    }
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.initSmartlinkSdk) {
+      this.initSmartlinkSdk = false;
+      this.initializeSmartLinks();
+    }
   }
 
   detectChanges(): void {
@@ -41,6 +59,10 @@ export abstract class CoreComponent implements OnDestroy {
   stopPropagation(event: Event): void {
     event.stopPropagation();
     event.preventDefault();
+  }
+
+  protected initSmartLinks(): void {
+    this.initSmartlinkSdk = true;
   }
 
   protected zipObservables(observables: Observable<any>[]): Observable<void> {
@@ -81,5 +103,10 @@ export abstract class CoreComponent implements OnDestroy {
           onFinished();
         }
       });
+  }
+
+  private initializeSmartLinks(): void {
+    this.initSmartlinkSdk = false;
+    this.smartLinkSdk = KontentSmartLink.initialize({});
   }
 }
