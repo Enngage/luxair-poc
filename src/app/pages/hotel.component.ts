@@ -18,10 +18,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
   selector: 'app-hotel',
   templateUrl: './hotel.component.html',
 })
-export class HotelComponent
-  extends CoreComponent
-  implements OnInit
-{
+export class HotelComponent extends CoreComponent implements OnInit {
   public hotel?: Hotel;
 
   public settings = {
@@ -44,9 +41,10 @@ export class HotelComponent
     private kontentAiService: KontentAiService,
     private sanitizer: DomSanitizer,
     cdr: ChangeDetectorRef,
-    activatedRoute: ActivatedRoute,
+    activatedRoute: ActivatedRoute
   ) {
     super(cdr, activatedRoute);
+    this.enableWebSpotlight = true;
   }
 
   getGalleryThumbnailImageUrl(asset: ElementModels.AssetModel): string {

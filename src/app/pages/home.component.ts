@@ -29,6 +29,7 @@ export class HomeComponent extends CoreComponent implements OnInit {
     activatedRoute: ActivatedRoute
   ) {
     super(cdr, activatedRoute);
+    this.enableWebSpotlight = true;
   }
 
   ngOnInit(): void {

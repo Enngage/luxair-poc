@@ -24,8 +24,9 @@ export abstract class CoreComponent implements OnDestroy, AfterViewChecked {
    */
   protected readonly ngUnsubscribe_: Subject<void> = new Subject<void>();
 
+  protected enableWebSpotlight: boolean = false;
   private initSmartlinkSdk: boolean = false;
-  private smartLinkSdk?: KontentSmartLink;
+  static smartLinkSdk?: KontentSmartLink;
 
   constructor(
     protected cdr: ChangeDetectorRef,
@@ -36,13 +37,13 @@ export abstract class CoreComponent implements OnDestroy, AfterViewChecked {
     this.ngUnsubscribe_.next();
     this.ngUnsubscribe_.complete();
 
-    if (this.smartLinkSdk) {
-      this.smartLinkSdk.destroy();
+    if (CoreComponent.smartLinkSdk && this.enableWebSpotlight) {
+      CoreComponent.smartLinkSdk.destroy();
     }
   }
 
   ngAfterViewChecked(): void {
-    if (this.initSmartlinkSdk) {
+    if (this.initSmartlinkSdk && this.enableWebSpotlight) {
       this.initSmartlinkSdk = false;
       this.initializeSmartLinks();
     }
@@ -75,7 +76,9 @@ export abstract class CoreComponent implements OnDestroy, AfterViewChecked {
   }
 
   protected initSmartLinks(): void {
-    this.initSmartlinkSdk = true;
+    if (this.enableWebSpotlight) {
+      this.initSmartlinkSdk = true;
+    }
   }
 
   protected zipObservables(observables: Observable<any>[]): Observable<void> {
@@ -120,6 +123,8 @@ export abstract class CoreComponent implements OnDestroy, AfterViewChecked {
 
   private initializeSmartLinks(): void {
     this.initSmartlinkSdk = false;
-    this.smartLinkSdk = KontentSmartLink.initialize({});
+    CoreComponent.smartLinkSdk = KontentSmartLink.initialize({
+      debug: false,
+    });
   }
 }
