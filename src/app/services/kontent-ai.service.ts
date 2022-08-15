@@ -71,6 +71,7 @@ export class KontentAiService {
         .type(contentTypes.hotel_listing.codename)
         .queryConfig({
           usePreviewMode: usePreview,
+          waitForLoadingNewContent: usePreview
         })
         .depthParameter(0)
         .toPromise()
@@ -90,6 +91,7 @@ export class KontentAiService {
         .item<Hotel>(codename)
         .queryConfig({
           usePreviewMode: usePreview,
+          waitForLoadingNewContent: usePreview
         })
         .depthParameter(3)
         .toPromise()
@@ -105,7 +107,8 @@ export class KontentAiService {
       this.deliveryClient
         .items<Hotel>()
         .queryConfig({
-          usePreviewMode: usePreview
+          usePreviewMode: usePreview,
+          waitForLoadingNewContent: usePreview
         })
         .type(contentTypes.hotel.codename)
         .orderByDescending('elements.created')
