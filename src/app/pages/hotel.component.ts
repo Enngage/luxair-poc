@@ -42,11 +42,11 @@ export class HotelComponent
 
   constructor(
     private kontentAiService: KontentAiService,
-    private activatedRoute: ActivatedRoute,
     private sanitizer: DomSanitizer,
-    cdr: ChangeDetectorRef
+    cdr: ChangeDetectorRef,
+    activatedRoute: ActivatedRoute,
   ) {
-    super(cdr);
+    super(cdr, activatedRoute);
   }
 
   getGalleryThumbnailImageUrl(asset: ElementModels.AssetModel): string {
@@ -67,11 +67,9 @@ export class HotelComponent
     );
   }
 
-
-
   initHotel(codename: string): void {
     super.subscribeToObservable(
-      this.kontentAiService.getHotel(codename).pipe(
+      this.kontentAiService.getHotel(codename, super.isPreview()).pipe(
         map((hotel) => {
           this.hotel = hotel;
           this.googleMapUrl = this.getGoogleMapsUrl(hotel);

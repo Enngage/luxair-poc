@@ -5,6 +5,7 @@ import {
   HostBinding,
   OnDestroy,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import KontentSmartLink, {
   KontentSmartLinkEvent,
 } from '@kentico/kontent-smart-link';
@@ -26,7 +27,10 @@ export abstract class CoreComponent implements OnDestroy, AfterViewChecked {
   private initSmartlinkSdk: boolean = false;
   private smartLinkSdk?: KontentSmartLink;
 
-  constructor(protected cdr: ChangeDetectorRef) {}
+  constructor(
+    protected cdr: ChangeDetectorRef,
+    protected activatedRoute: ActivatedRoute
+  ) {}
 
   ngOnDestroy(): void {
     this.ngUnsubscribe_.next();
@@ -59,6 +63,15 @@ export abstract class CoreComponent implements OnDestroy, AfterViewChecked {
   stopPropagation(event: Event): void {
     event.stopPropagation();
     event.preventDefault();
+  }
+
+  protected isPreview(): boolean {
+    const isPreview = this.activatedRoute.snapshot.queryParams['isPreview'];
+
+    if (isPreview === 'true') {
+      return true;
+    }
+    return false;
   }
 
   protected initSmartLinks(): void {

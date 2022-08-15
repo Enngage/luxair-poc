@@ -5,9 +5,12 @@ import {
 } from '@kontent-ai/delivery-sdk';
 import {
   AssetResponses,
+  ContentItemModels,
   createManagementClient,
   IManagementClient,
+  LanguageVariantModels,
   LanguageVariantResponses,
+  SharedModels,
   WorkflowContracts,
 } from '@kontent-ai/management-sdk';
 import { from, map, Observable } from 'rxjs';
@@ -28,10 +31,13 @@ export class KontentAiService {
   private readonly apiKey: string =
     'ew0KICAiYWxnIjogIkhTMjU2IiwNCiAgInR5cCI6ICJKV1QiDQp9.ew0KICAianRpIjogIjk0ZjRkYzA5ZDYwODRiNGRiOWZiY2E1NzExNWIxYjZlIiwNCiAgImlhdCI6ICIxNjYwMjg5MDg5IiwNCiAgImV4cCI6ICIyMDA1ODg5MDg5IiwNCiAgInZlciI6ICIyLjEuMCIsDQogICJ1aWQiOiAidXNyXzB2UVlCQ3FBdnJubzVyaWZIbmlZRUciLA0KICAicHJvamVjdF9pZCI6ICI0YWE2NzkyMjFmM2IwMTdjNjhlZWI2YWI0MTQ4MDIzOSIsDQogICJhdWQiOiAibWFuYWdlLmtlbnRpY29jbG91ZC5jb20iDQp9.kxJPDQvP3hrXB4AYs6Evupp7dpeDrNgh3OYg4nZUTi8';
 
+  private readonly previewApiKey: string =
+    'ew0KICAiYWxnIjogIkhTMjU2IiwNCiAgInR5cCI6ICJKV1QiDQp9.ew0KICAianRpIjogIjUyMmQ1YTM5NjNhMjQwYmZhODZmNGVjMGI5MmM4NzJlIiwNCiAgImlhdCI6ICIxNjYwMjg5MDgyIiwNCiAgImV4cCI6ICIyMDA1ODg5MDgyIiwNCiAgInZlciI6ICIxLjAuMCIsDQogICJwcm9qZWN0X2lkIjogIjRhYTY3OTIyMWYzYjAxN2M2OGVlYjZhYjQxNDgwMjM5IiwNCiAgImF1ZCI6ICJwcmV2aWV3LmRlbGl2ZXIua2VudGljb2Nsb3VkLmNvbSINCn0.M9blFjtbQ4nR3yvFauBlCbmXtK-VqJURDFFr28J8OzE';
+
   private readonly deliveryClient: IDeliveryClient;
   private readonly managementClient: IManagementClient<any>;
 
-  private readonly multipleChoiceValues = {
+  private readonly yesOrNoMultipleChoiceValues = {
     yes: 'yes',
     no: 'no',
   };
@@ -39,8 +45,9 @@ export class KontentAiService {
   constructor() {
     this.deliveryClient = createDeliveryClient({
       projectId: this.projectId,
+      previewApiKey: this.previewApiKey,
       defaultQueryConfig: {
-        waitForLoadingNewContent: true,
+        waitForLoadingNewContent: false,
       },
     });
     this.managementClient = createManagementClient({
@@ -57,11 +64,14 @@ export class KontentAiService {
     return languages.default.codename;
   }
 
-  getHotelListing(): Observable<HotelListing | undefined> {
+  getHotelListing(usePreview: boolean): Observable<HotelListing | undefined> {
     return from(
       this.deliveryClient
         .items<HotelListing>()
         .type(contentTypes.hotel_listing.codename)
+        .queryConfig({
+          usePreviewMode: usePreview,
+        })
         .depthParameter(0)
         .toPromise()
     ).pipe(
@@ -74,9 +84,15 @@ export class KontentAiService {
     );
   }
 
-  getHotel(codename: string): Observable<Hotel> {
+  getHotel(codename: string, usePreview: boolean): Observable<Hotel> {
     return from(
-      this.deliveryClient.item<Hotel>(codename).depthParameter(3).toPromise()
+      this.deliveryClient
+        .item<Hotel>(codename)
+        .queryConfig({
+          usePreviewMode: usePreview,
+        })
+        .depthParameter(3)
+        .toPromise()
     ).pipe(
       map((response) => {
         return response.data.item;
@@ -84,10 +100,13 @@ export class KontentAiService {
     );
   }
 
-  getHotels(): Observable<Hotel[]> {
+  getHotels(usePreview: boolean): Observable<Hotel[]> {
     return from(
       this.deliveryClient
         .items<Hotel>()
+        .queryConfig({
+          usePreviewMode: usePreview
+        })
         .type(contentTypes.hotel.codename)
         .orderByDescending('elements.created')
         .toPromise()
@@ -249,8 +268,8 @@ export class KontentAiService {
           value: [
             {
               codename: hotel.parking.AirportParkingIncluded
-                ? this.multipleChoiceValues.yes
-                : this.multipleChoiceValues.no,
+                ? this.yesOrNoMultipleChoiceValues.yes
+                : this.yesOrNoMultipleChoiceValues.no,
             },
           ],
         }),
@@ -371,6 +390,8 @@ export class KontentAiService {
         .withoutData()
         .toPromise();
     }
+
+    await this.assignHotelToListing(hotelContentItem.data);
 
     return hotelLanguageVariant;
   }
@@ -786,5 +807,55 @@ export class KontentAiService {
     }
 
     return country.data.id;
+  }
+
+  private async assignHotelToListing(
+    hotel: ContentItemModels.ContentItem
+  ): Promise<void> {
+    const hotelListings = await this.managementClient
+      .listLanguageVariantsOfContentType()
+      .byTypeCodename(contentTypes.hotel_listing.codename)
+      .toPromise();
+
+    if (hotelListings.data.items.length) {
+      const hotelListing = hotelListings.data.items[0];
+      const rawHotelListing = hotelListing._raw;
+
+      const subpages = rawHotelListing.elements.find(
+        (m) =>
+          m.element.codename ===
+          contentTypes.hotel_listing.elements.subpages.codename
+      );
+
+      if (subpages) {
+        const references = subpages.value as SharedModels.ReferenceObject[];
+
+        if (!references.find((m) => m.id === hotel.id)) {
+          references.push({
+            id: hotel.id,
+          });
+
+          await this.managementClient
+            .createNewVersionOfLanguageVariant()
+            .byItemId(hotelListing.item.id as string)
+            .byLanguageId(hotelListing.language.id as string)
+            .toPromise();
+
+          await this.managementClient
+            .upsertLanguageVariant()
+            .byItemId(hotelListing.item.id as string)
+            .byLanguageId(hotelListing.language.id as string)
+            .withData((builder) => hotelListing._raw.elements)
+            .toPromise();
+
+          await this.managementClient
+            .publishLanguageVariant()
+            .byItemId(hotelListing.item.id as string)
+            .byLanguageId(hotelListing.language.id as string)
+            .withoutData()
+            .toPromise();
+        }
+      }
+    }
   }
 }

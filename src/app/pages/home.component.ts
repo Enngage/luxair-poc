@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute } from '@angular/router';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { map } from 'rxjs';
 import { CoreComponent } from 'src/lib/core/core.component';
@@ -24,9 +25,10 @@ export class HomeComponent extends CoreComponent implements OnInit {
   constructor(
     private kontentAiService: KontentAiService,
     private _snackBar: MatSnackBar,
-    cdr: ChangeDetectorRef
+    cdr: ChangeDetectorRef,
+    activatedRoute: ActivatedRoute
   ) {
-    super(cdr);
+    super(cdr, activatedRoute);
   }
 
   ngOnInit(): void {
@@ -36,7 +38,7 @@ export class HomeComponent extends CoreComponent implements OnInit {
 
   initHotelListing(): void {
     super.subscribeToObservable(
-      this.kontentAiService.getHotelListing().pipe(
+      this.kontentAiService.getHotelListing(super.isPreview()).pipe(
         map((hotelListing) => {
           this.hotelListing = hotelListing;
           super.initSmartLinks();
@@ -60,7 +62,7 @@ export class HomeComponent extends CoreComponent implements OnInit {
     this.isFetching = true;
     super.markForCheck();
     super.subscribeToObservable(
-      this.kontentAiService.getHotels().pipe(
+      this.kontentAiService.getHotels(super.isPreview()).pipe(
         map((hotels) => {
           this.hotels = hotels;
           this.isFetching = false;
